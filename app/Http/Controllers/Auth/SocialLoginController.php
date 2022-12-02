@@ -7,10 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserProvider;
 use App\Providers\RouteServiceProvider;
-use Exception;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Laravel\Socialite\Facades\Socialite;
+use Auth;
+use Log;
+use Socialite;
 
 class SocialLoginController extends Controller
 {
@@ -64,6 +63,7 @@ class SocialLoginController extends Controller
      * Return user if exists; create and return if doesn't.
      *
      * @param $githubUser
+     *
      * @return User
      */
     private function findOrCreateUser($socialUser, $provider)

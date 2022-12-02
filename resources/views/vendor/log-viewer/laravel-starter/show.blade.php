@@ -31,8 +31,8 @@ $module_icon = "c-icon cil-list-rich";
             </div>
 
             <div class="col-4">
-                <div class="btn-toolbar float-end" role="toolbar" aria-label="Toolbar with button groups">
-                    <x-backend.buttons.return-back />
+                <div class="btn-toolbar float-right" role="toolbar" aria-label="Toolbar with button groups">
+                    <x-buttons.return-back />
                 </div>
             </div>
         </div>
@@ -70,11 +70,11 @@ $module_icon = "c-icon cil-list-rich";
                                 <strong>
                                     @lang('Log Info')
                                 </strong>
-                                <div class="btn-toolbar float-end">
+                                <div class="btn-toolbar float-right">
                                     <a href="{{ route('log-viewer::logs.download', [$log->date]) }}" class="btn btn-success">
                                         <i class="fas fa-download"></i>&nbsp;@lang('Download')
                                     </a>
-                                    <a href="#delete-log-modal" class="btn btn-danger ms-1" data-coreui-toggle="modal">
+                                    <a href="#delete-log-modal" class="btn btn-danger ml-1" data-toggle="modal">
                                         <i class="fas fa-trash-alt"></i>&nbsp;@lang('Delete')
                                     </a>
                                 </div>
@@ -133,7 +133,7 @@ $module_icon = "c-icon cil-list-rich";
                         <div class="card mb-4">
                             @if ($entries->hasPages())
                                 <div class="card-header">
-                                    <span class="badge badge-info float-end">
+                                    <span class="badge badge-info float-right">
                                         Page {!! $entries->currentPage() !!} of {!! $entries->lastPage() !!}
                                     </span>
                                 </div>
@@ -147,7 +147,7 @@ $module_icon = "c-icon cil-list-rich";
                                             <th style="width: 120px;">Level</th>
                                             <th style="width: 65px;">Time</th>
                                             <th>Header</th>
-                                            <th class="text-end">Actions</th>
+                                            <th class="text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -169,9 +169,9 @@ $module_icon = "c-icon cil-list-rich";
                                                 <td>
                                                     {{ $entry->header }}
                                                 </td>
-                                                <td class="text-end">
+                                                <td class="text-right">
                                                     @if ($entry->hasStack())
-                                                        <a class="btn btn-sm btn-light" role="button" data-coreui-toggle="collapse" href="#log-stack-{{ $key }}" aria-expanded="false" aria-controls="log-stack-{{ $key }}">
+                                                        <a class="btn btn-sm btn-light" role="button" data-toggle="collapse" href="#log-stack-{{ $key }}" aria-expanded="false" aria-controls="log-stack-{{ $key }}">
                                                             <i class="fa fa-toggle-on"></i> Stack
                                                         </a>
                                                     @endif
@@ -219,13 +219,15 @@ $module_icon = "c-icon cil-list-rich";
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">DELETE LOG FILE</h5>
-                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to <span class="badge bg-danger">DELETE</span> this log file <span class="badge text-bg-warning">{{ $log->date }}</span> ?</p>
+                    <p>Are you sure you want to <span class="badge badge-danger">DELETE</span> this log file <span class="badge badge-primary">{{ $log->date }}</span> ?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary mr-auto" data-coreui-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-secondary mr-auto" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-sm btn-danger" data-loading-text="Loading&hellip;">DELETE FILE</button>
                 </div>
             </div>

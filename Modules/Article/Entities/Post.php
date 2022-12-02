@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Modules\Article\Entities\Presenters\PostPresenter;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Post extends BaseModel
@@ -21,14 +20,9 @@ class Post extends BaseModel
 
     protected $table = 'posts';
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logUnguarded()
-            ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
-            ->useLogName($this->table);
-    }
+    protected static $logName = 'posts';
+    protected static $logOnlyDirty = true;
+    protected static $logAttributes = ['name', 'intro', 'content', 'type', 'category_id', 'category_name', 'is_featured', 'meta_title', 'meta_keywords', 'meta_description', 'published_at', 'moderated_at', 'moderated_by', 'status', 'created_by_alias'];
 
     public function category()
     {
@@ -145,6 +139,7 @@ class Post extends BaseModel
      * Get the list of Published Articles.
      *
      * @param [type] $query [description]
+     *
      * @return [type] [description]
      */
     public function scopePublished($query)
@@ -169,6 +164,7 @@ class Post extends BaseModel
      * Get the list of Recently Published Articles.
      *
      * @param [type] $query [description]
+     *
      * @return [type] [description]
      */
     public function scopeRecentlyPublished($query)

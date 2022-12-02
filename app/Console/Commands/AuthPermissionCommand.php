@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Permission;
+use App\Models\Role;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -42,7 +43,7 @@ class AuthPermissionCommand extends Command
         $permissions = $this->generatePermissions();
 
         // check if its remove
-        if ($this->option('remove')) {
+        if ($is_remove = $this->option('remove')) {
             // remove permission
             if (Permission::where('name', 'LIKE', '%'.$this->getNameArgument())->delete()) {
                 $this->warn('Permissions '.implode(', ', $permissions).' deleted.');
@@ -56,6 +57,12 @@ class AuthPermissionCommand extends Command
             }
 
             $this->info('Permissions '.implode(', ', $permissions).' created.');
+        }
+
+        // sync role for admin
+        if ($role = Role::where('name', 'administrator')->first()) {
+            $role->syncPermissions(Permission::all());
+            $this->info('Admin Permissions Updated.');
         }
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Events\Auth\UserLoginSuccess;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
@@ -24,42 +23,35 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      *
-     * @param  \App\Http\Requests\Auth\LoginRequest  $request
+     * @param \App\Http\Requests\Auth\LoginRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(LoginRequest $request)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $request->authenticate();
 
-        $email = $request->email;
-        $password = $request->password;
-        $remember = $request->remember_me;
+        $request->session()->regenerate();
 
-        if (Auth::attempt(['email' => $email, 'password' => $password, 'status' => 1], $remember)) {
-            $request->session()->regenerate();
+        $redirectTo = request()->redirectTo;
 
-            event(new UserLoginSuccess($request, auth()->user()));
-
-            return redirect()->intended(RouteServiceProvider::HOME);
+        if ($redirectTo) {
+            return redirect($redirectTo);
+        } else {
+            return redirect(RouteServiceProvider::HOME);
         }
-
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
     }
 
     /**
      * Destroy an authenticated session.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request)
     {
-        Auth::guard('web')->logout();
+        Auth::logout();
 
         $request->session()->invalidate();
 

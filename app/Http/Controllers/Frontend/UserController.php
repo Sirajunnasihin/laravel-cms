@@ -41,7 +41,8 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function show($username)
@@ -70,13 +71,12 @@ class UserController extends Controller
     /**
      * Display Profile Details of Logged in user.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function profile($id)
     {
-        $id = decode_id($id);
-
         $module_title = $this->module_title;
         $module_name = $this->module_name;
         $module_path = $this->module_path;
@@ -104,13 +104,12 @@ class UserController extends Controller
     /**
      * Show the form for Profile Paeg Editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function profileEdit($id)
     {
-        $id = decode_id($id);
-
         $module_title = $this->module_title;
         $module_name = $this->module_name;
         $module_path = $this->module_path;
@@ -123,7 +122,7 @@ class UserController extends Controller
         $page_heading = ucfirst($module_title);
         $title = $page_heading.' '.ucfirst($module_action);
 
-        if (! auth()->user()->can('edit_users')) {
+        if (!auth()->user()->can('edit_users')) {
             $id = auth()->user()->id;
         }
 
@@ -145,8 +144,9 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function profileUpdate(Request $request, $id)
@@ -172,7 +172,7 @@ class UserController extends Controller
         $module_name = $this->module_name;
         $module_name_singular = Str::singular($this->module_name);
 
-        if (! auth()->user()->can('edit_users')) {
+        if (!auth()->user()->can('edit_users')) {
             $id = auth()->user()->id;
             $username = auth()->user()->username;
         }
@@ -207,7 +207,8 @@ class UserController extends Controller
     /**
      * Show the form for Profile Paeg Editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function changePassword($id)
@@ -238,8 +239,9 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function changePasswordUpdate(Request $request, $username)
@@ -268,7 +270,8 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -301,8 +304,9 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -357,7 +361,7 @@ class UserController extends Controller
         $user_provider_id = $request->user_provider_id;
         $user_id = $request->user_id;
 
-        if (! $user_provider_id > 0 || ! $user_id > 0) {
+        if (!$user_provider_id > 0 || !$user_id > 0) {
             flash('Invalid Request. Please try again.')->error();
 
             return redirect()->back();
@@ -382,6 +386,7 @@ class UserController extends Controller
      * Resend Email Confirmation Code to User.
      *
      * @param [type] $hashid [description]
+     *
      * @return [type] [description]
      */
     public function emailConfirmationResend($id)

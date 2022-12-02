@@ -3,7 +3,7 @@
 namespace Modules\Article\Listeners\PostUpdated;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
+use Log;
 use Modules\Article\Events\PostUpdated;
 
 class UpdatePostData implements ShouldQueue
@@ -21,7 +21,8 @@ class UpdatePostData implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param object $event
+     *
      * @return void
      */
     public function handle(PostUpdated $event)

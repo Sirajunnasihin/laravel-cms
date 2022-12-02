@@ -1,27 +1,35 @@
 @extends('backend.layouts.app')
 
-@section('title') {{ __($module_action) }} {{ __($module_title) }} @endsection
+@section('title') {{ __($module_action) }} {{ $module_title }} @endsection
 
 @section('breadcrumbs')
 <x-backend-breadcrumbs>
-    <x-backend-breadcrumb-item type="active" icon='{{ $module_icon }}'>{{ __($module_title) }}</x-backend-breadcrumb-item>
+    <x-backend-breadcrumb-item type="active" icon='{{ $module_icon }}'>{{ $module_title }}</x-backend-breadcrumb-item>
 </x-backend-breadcrumbs>
 @endsection
 
 @section('content')
 <div class="card">
     <div class="card-body">
-        <x-backend.section-header>
-            <i class="{{ $module_icon }}"></i> {{ __($module_title) }} <small class="text-muted">{{ __($module_action) }}</small>
+        <div class="row">
+            <div class="col">
+                <h4 class="card-title mb-0">
+                    <i class="{{ $module_icon }}"></i> {{ $module_title }} <small class="text-muted">Data Table {{ __($module_action) }}</small>
+                </h4>
+                <div class="small text-muted">
+                    {{ __('labels.backend.roles.index.sub-title') }}
+                </div>
+            </div>
 
-            <x-slot name="subtitle">
-                @lang(":module_name Management Dashboard", ['module_name'=>Str::title($module_name)])
-            </x-slot>
-            <x-slot name="toolbar">
-                <x-buttons.create route='{{ route("backend.$module_name.create") }}' title="{{__('Create')}} {{ ucwords(Str::singular($module_name)) }}" />
-            </x-slot>
-        </x-backend.section-header>
-        
+            <div class="col-4">
+                <div class="float-right">
+                    <x-buttons.create route='{{ route("backend.$module_name.create") }}' title="{{__('Create')}} {{ ucwords(Str::singular($module_name)) }}"/>
+                </div>
+            </div>
+            <!--/.col-->
+        </div>
+        <!--/.row-->
+
         <div class="row mt-4">
             <div class="col">
                 <table class="table table-hover table-responsive-sm">
@@ -29,7 +37,7 @@
                         <tr>
                             <th>{{ __("labels.backend.$module_name.fields.name") }}</th>
                             <th>{{ __("labels.backend.$module_name.fields.permissions") }}</th>
-                            <th class="text-end">{{ __("labels.backend.action") }}</th>
+                            <th class="text-right">{{ __("labels.backend.action") }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,7 +53,7 @@
                                 <li>{{ $permission->name }}</li>
                                 @endforeach
                             </td>
-                            <td class="text-end">
+                            <td class="text-right">
                                 @can('edit_'.$module_name)
                                 <x-buttons.edit route='{!!route("backend.$module_name.edit", $module_name_singular)!!}' title="{{__('Edit')}} {{ ucwords(Str::singular($module_name)) }}" small="true" />
                                 @endcan
@@ -66,7 +74,7 @@
                 </div>
             </div>
             <div class="col-5">
-                <div class="float-end">
+                <div class="float-right">
                     {!! $$module_name->render() !!}
                 </div>
             </div>

@@ -1,6 +1,5 @@
+// Variables
+@import 'backend-custom';
 
-@import "backend_variables";
-
-@import "resources/vendors/coreui/src/scss/style.scss";
-
-@import "backend_custom";
+// Theme
+@import "~@coreui/coreui/scss/coreui";

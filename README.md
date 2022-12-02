@@ -1,14 +1,15 @@
+
 <p align="center"><img src="https://user-images.githubusercontent.com/396987/82162573-6940f500-98c7-11ea-974e-888b4f866c74.jpg" alt="Laravel Starter - A CMS like modular starter project built with Laravel"></p>
 
-# Laravel Starter (based on Laravel 9.x)
-**Laravel Starter** is a Laravel 9.x based simple starter project. Most of the commonly needed features of an application like Authentication, User and Role management Application Backend, Backup, Logviewer are available here. It is modular, so you can use this project as a base and build your own modules. You can use the same module in any of the `Laravel Starter` based projects. 
+# Laravel Starter (based on Laravel 8.x)
+**Laravel Starter** is a Laravel 8.x based simple starter project. It can be used to build all type of applications. Most of the commonly needed features like Authentication, Application Backend, Backup, Logviewer are available here. It is modular, so you can use this project as a base and build your own modules. You can use the same module in any of the `Laravel Starter` based projects. New features and functionalities are being added on a regular basis.
 
 Please let me know your feedback and comments.
 
 # Reporting a Vulnerability
 If you discover any security related issues, please send an e-mail to Nasir Khan Saikat via nasir8891@gmail.com instead of using the issue tracker.
 
-# Appplication Demo
+# Demo
 Check the following demo project. It is just a straight installation of the project without any modification.
 
 Demo URL: http://laravel.nasirkhn.com
@@ -22,10 +23,7 @@ Pass: secret
 
 ```
 
-## Demo Data
-If you want to test the application on you local with additional demo data you may use the following command. By using this you can truncate the `posts, categories, tags and comments` table and insert new demo data.
-
-`--fresh` option will truncate the tables, without this command new set to data will be inserted only.
+For additional demo data you may use the following command. By using this you can truncate the `posts, categories, tags and comments` table and insert new demo data. `--fresh` option will truncate the tables, without this command new set to data will be inserted only.
 
 ```
 
@@ -37,39 +35,17 @@ php artisan starter:insert-demo-data --fresh
 
 We have created a number of custom commands for the project. The commands are listed below with a brief about the use of it.
 
-## Create New module
-
-To create a project use the following command, you have repalce the MODULE_NAME with the name of the module.
-
-```php
-php artisan module:build MODULE_NAME
-```
-
-You may want to use `--force` option to overwrite the existing module. if you use this option, it will replace all the exisitng files with the defalut stub files.
-
-```php
-php artisan module:build MODULE_NAME --force
-```
-
 ## Clear All Cache
 
-```bash
-composer clear-all
-```
+`composer clear-all`
 
 this is a shortcut command clear all cache including config, route and more
 
 ## Code Style Fix
 
-```bash
-composer fix-cs
-```
+`composer fix-cs`
 
 apply the code style fix by this command.
-
-## Role - Permissiosn
-
-A number of custom commands are available to add and update role-permissions. Please read the [Role - Permission Wiki page](https://github.com/nasirkhan/laravel-starter/wiki/Role-Permission), where you will find the list of commands with examples. 
 
 
 # Features
@@ -97,10 +73,10 @@ It is a modular application, and a number of modules are installed by default. I
 * Language Switcher
 * Localization enable across the porject
 * Backend Theme
-  * Bootstrap 5, CoreUI
-  * Fontawesome 6
+  * Bootstrap 4, CoreUI
+  * Fontawesome 5
 * Frontend Theme
-  * Tailwind
+  * Bootstrap 4, Impact Design Kit
   * Fontawesome 5
 * Article Module
   * Posts
@@ -111,10 +87,10 @@ It is a modular application, and a number of modules are installed by default. I
   * File browser
 * Application Settings
 * External Libraries
-  * Bootstrap 5
-  * Fontawesome 6
+  * Bootstrap 4
+  * Fontawesome 5
   * CoreUI
-  * Tailwind
+  * Impact Design Kit
   * Datatables
   * Select2
   * Date Time Picker
@@ -122,13 +98,14 @@ It is a modular application, and a number of modules are installed by default. I
 * Log Viewer
 * Notification
   * Dashboard and details view
+* RSS Feed
 
 
 # User Guide
 
 ## Installation
 
-Follow the steps mentioned below to install and run the project. You may find more details about the installation in [Installation Wiki](https://github.com/nasirkhan/laravel-starter/wiki/Installation).
+Follow the steps mentioned below to install and run the project.
 
 1. Clone or download the repository
 2. Go to the project directory and run `composer install`
@@ -142,13 +119,11 @@ Follow the steps mentioned below to install and run the project. You may find mo
 
 `php artisan cache:forget spatie.permission.cache`
 
-## Docker and Laravel Sail
-This project is configured with Laravel Sail (https://laravel.com/docs/9.x/sail). You can use all the docker functionalities here.
 
 ## Icons
 FontAwesome & CoreUI Icons, two different font icon library is installed for the Backend theme and only FontAwesome for the Frontend. For both of the cases we used the free version. You may install the pro version separately for your own project.
 
-* **FontAwesome** - https://fontawesome.com/search?m=free
+* **FontAwesome** - https://fontawesome.com/icons?d=gallery&m=free
 * **CoreUI Icons** - https://icons.coreui.io/icons/
 
 
@@ -156,19 +131,19 @@ FontAwesome & CoreUI Icons, two different font icon library is installed for the
 
 __Home Page__
 
-![Laravel Starter Home](https://user-images.githubusercontent.com/396987/164892584-733afddc-8eab-4152-bd4a-d9c2f9e312d5.png)
+![Laravel Starter Home](https://user-images.githubusercontent.com/396987/95010200-3d8d9400-0649-11eb-8c44-72b02a37c00b.jpeg)
 
 __Login Page__
 
-![Laravel Starter Login](https://user-images.githubusercontent.com/396987/164892620-3b4c8b1b-81c8-4630-a39f-38dadff89a7d.png)
+![Laravel Starter Login](https://user-images.githubusercontent.com/396987/95010203-3ebec100-0649-11eb-91a6-1a7ef0bb47eb.jpeg)
 
 __Posts Page__
 
-![Laravel Starter Posts Page](https://user-images.githubusercontent.com/396987/164892767-2f961466-e346-4990-a183-655ce5a6603b.png)
+![Laravel Starter Posts Page](https://user-images.githubusercontent.com/396987/95010196-39fa0d00-0649-11eb-8a06-78472065b2e6.jpeg)
 
 __Backend Dashboard__
 
-![Backend Dashboard](https://user-images.githubusercontent.com/396987/164915155-c2984b18-ae96-408a-820a-cbcac2cceb10.png)
+![Backend Dashboard](https://user-images.githubusercontent.com/396987/88489727-f3889200-cfb7-11ea-819f-dc9a52bc8d82.jpg)
 
 ---
 

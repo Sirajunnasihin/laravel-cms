@@ -9,8 +9,9 @@ class GenerateMenus
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -24,9 +25,9 @@ class GenerateMenus
         \Menu::make('admin_sidebar', function ($menu) {
 
             // Tags
-            $menu->add('<i class="nav-icon fas fa-tags"></i> '.__('Tags'), [
+            $menu->add('<i class="fas fa-tags c-sidebar-nav-icon"></i> Tags', [
                 'route' => 'backend.tags.index',
-                'class' => 'nav-item',
+                'class' => 'c-sidebar-nav-item',
             ])
             ->data([
                 'order'         => 84,
@@ -34,7 +35,7 @@ class GenerateMenus
                 'permission'    => ['view_tags'],
             ])
             ->link->attr([
-                'class' => 'nav-link',
+                'class' => 'c-sidebar-nav-link',
             ]);
         })->sortBy('order');
 
