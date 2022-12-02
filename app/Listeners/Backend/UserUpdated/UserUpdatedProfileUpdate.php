@@ -21,7 +21,8 @@ class UserUpdatedProfileUpdate implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  UserUpdated  $event
+     * @param UserUpdated $event
+     *
      * @return void
      */
     public function handle(UserUpdated $event)
@@ -32,7 +33,6 @@ class UserUpdatedProfileUpdate implements ShouldQueue
         $userprofile->name = $user->name;
         $userprofile->first_name = $user->first_name;
         $userprofile->last_name = $user->last_name;
-        $userprofile->username = $user->username;
         $userprofile->email = $user->email;
         $userprofile->mobile = $user->mobile;
         $userprofile->gender = $user->gender;
@@ -44,8 +44,5 @@ class UserUpdatedProfileUpdate implements ShouldQueue
         $userprofile->deleted_at = $user->deleted_at;
         $userprofile->deleted_by = $user->deleted_by;
         $userprofile->save();
-
-        // Clear Cache
-        \Artisan::call('cache:clear');
     }
 }

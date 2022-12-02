@@ -3,24 +3,22 @@
 namespace App\Models;
 
 use App\Models\Presenters\UserPresenter;
-use App\Models\Traits\HasHashedMediaTrait;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
-    use HasFactory;
     use HasRoles;
     use Notifiable;
     use SoftDeletes;
-    use HasHashedMediaTrait;
+    use HasMediaTrait;
     use UserPresenter;
-
     protected $guarded = [
         'id',
         'updated_at',
@@ -69,6 +67,18 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     }
 
     /**
+     * Send the password reset notification.
+     *
+     * @param string $token
+     *
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
+
+    /**
      * Get the list of users related to the current User.
      *
      * @return [array] roels
@@ -81,7 +91,8 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     /**
      * Route notifications for the Slack channel.
      *
-     * @param  \Illuminate\Notifications\Notification  $notification
+     * @param \Illuminate\Notifications\Notification $notification
+     *
      * @return string
      */
     public function routeNotificationForSlack($notification)

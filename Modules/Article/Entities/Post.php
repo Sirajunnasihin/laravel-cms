@@ -4,31 +4,24 @@ namespace Modules\Article\Entities;
 
 use App\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Modules\Article\Entities\Presenters\PostPresenter;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Feed\Feedable;
+use Spatie\Feed\FeedItem;
 
-class Post extends BaseModel
+class Post extends BaseModel implements Feedable
 {
-    use HasFactory;
     use LogsActivity;
     use SoftDeletes;
     use PostPresenter;
     use Notifiable;
-
     protected $table = 'posts';
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logUnguarded()
-            ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
-            ->useLogName($this->table);
-    }
+    protected static $logName = 'posts';
+    protected static $logOnlyDirty = true;
+    protected static $logAttributes = ['name', 'intro', 'content', 'type', 'category_id', 'category_name', 'is_featured', 'meta_title', 'meta_keywords', 'meta_description', 'published_at', 'moderated_at', 'moderated_by', 'status', 'created_by_alias'];
 
     public function category()
     {
@@ -37,15 +30,15 @@ class Post extends BaseModel
 
     public function tags()
     {
-        return $this->morphToMany('Modules\Tag\Entities\Tag', 'taggable');
+        return $this->belongsToMany('Modules\Article\Entities\Tag');
     }
 
     /**
-     * Get all of the post's comments.
+     * All Published Comments.
      */
     public function comments()
     {
-        return $this->morphMany('Modules\Comment\Entities\Comment', 'commentable')->where('status', '=', 1);
+        return $this->hasMany('Modules\Article\Entities\Comment')->where('status', '=', 1);
     }
 
     /**
@@ -103,7 +96,7 @@ class Post extends BaseModel
         $this->attributes['meta_description'] = $value;
 
         if (empty($value)) {
-            $this->attributes['meta_description'] = setting('meta_description');
+            $this->attributes['meta_description'] = config('settings.meta_description');
         }
     }
 
@@ -145,6 +138,7 @@ class Post extends BaseModel
      * Get the list of Published Articles.
      *
      * @param [type] $query [description]
+     *
      * @return [type] [description]
      */
     public function scopePublished($query)
@@ -169,6 +163,7 @@ class Post extends BaseModel
      * Get the list of Recently Published Articles.
      *
      * @param [type] $query [description]
+     *
      * @return [type] [description]
      */
     public function scopeRecentlyPublished($query)
@@ -178,13 +173,21 @@ class Post extends BaseModel
                         ->orderBy('published_at', 'desc');
     }
 
-    /**
-     * Create a new factory instance for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    protected static function newFactory()
+    public function toFeedItem()
     {
-        return \Modules\Article\Database\Factories\PostFactory::new();
+        $author = ($this->created_by_alias != '') ? $this->created_by_alias : $this->created_by_name;
+
+        return FeedItem::create()
+                        ->id(encode_id($this->id))
+                        ->title($this->name)
+                        ->summary($this->intro)
+                        ->updated($this->updated_at)
+                        ->link(route('frontend.posts.show', encode_id($this->id)))
+                        ->author($author);
+    }
+
+    public static function getFeedItems()
+    {
+        return self::latest()->published()->take('5')->get();
     }
 }

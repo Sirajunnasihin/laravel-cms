@@ -1,92 +1,51 @@
-<p align="center"><img src="https://user-images.githubusercontent.com/396987/82162573-6940f500-98c7-11ea-974e-888b4f866c74.jpg" alt="Laravel Starter - A CMS like modular starter project built with Laravel"></p>
+<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
 
-# Laravel Starter (based on Laravel 9.x)
-**Laravel Starter** is a Laravel 9.x based simple starter project. Most of the commonly needed features of an application like Authentication, User and Role management Application Backend, Backup, Logviewer are available here. It is modular, so you can use this project as a base and build your own modules. You can use the same module in any of the `Laravel Starter` based projects. 
+# Laravel Starter
+**Laravel Starter** is a Laravel 7.x based simple starter project. It can be used to build all type of applications. Most of the commonly needed features like Authentication, Application Backend, Backup, Logviewer are available here. It is modular, so you can use this project as a base and build your own modules. You can use the same module in any of the Laravel starter based projects. New features and functionalities are being added on a regular basis.
 
 Please let me know your feedback and comments.
 
-# Reporting a Vulnerability
-If you discover any security related issues, please send an e-mail to Nasir Khan Saikat via nasir8891@gmail.com instead of using the issue tracker.
 
-# Appplication Demo
+# Demo
 Check the following demo project. It is just a straight installation of the project without any modification.
-
-Demo URL: http://laravel.nasirkhn.com
 
 ```
 User: super@admin.com
-Pass: secret
+Pass: 1234
 
 User: user@user.com
-Pass: secret
+Pass: 1234
 
 ```
 
-## Demo Data
-If you want to test the application on you local with additional demo data you may use the following command. By using this you can truncate the `posts, categories, tags and comments` table and insert new demo data.
+http://laravel.nasirkhn.com/
 
-`--fresh` option will truncate the tables, without this command new set to data will be inserted only.
 
-```
+## Custom Commands
 
-php artisan starter:insert-demo-data --fresh
+### Clear All Cache
 
-```
-
-# Custom Commands
-
-We have created a number of custom commands for the project. The commands are listed below with a brief about the use of it.
-
-## Create New module
-
-To create a project use the following command, you have repalce the MODULE_NAME with the name of the module.
-
-```php
-php artisan module:build MODULE_NAME
-```
-
-You may want to use `--force` option to overwrite the existing module. if you use this option, it will replace all the exisitng files with the defalut stub files.
-
-```php
-php artisan module:build MODULE_NAME --force
-```
-
-## Clear All Cache
-
-```bash
-composer clear-all
-```
+`composer clear-all`
 
 this is a shortcut command clear all cache including config, route and more
 
-## Code Style Fix
+### Code Style Fix
 
-```bash
-composer fix-cs
-```
+`composer fix-cs`
 
 apply the code style fix by this command.
 
-## Role - Permissiosn
 
-A number of custom commands are available to add and update role-permissions. Please read the [Role - Permission Wiki page](https://github.com/nasirkhan/laravel-starter/wiki/Role-Permission), where you will find the list of commands with examples. 
-
-
-# Features
-
-The `Laravel Starter` comes with a number of features which are the most common in almost all the applications. It is a template project which means it is intended to build in a way that it can be used for other projects.
-
-It is a modular application, and a number of modules are installed by default. It will be helpful to use it as a base for the future applications.
+## Features
 
 * Admin feature and public views are completely separated as `Backend` and `Frontend` namespace.
-* Major feature are developed as `Modules`. Module like Posts, Comments, Tags are separated from the core features like User, Role, Permission
+* Major feature are developed as `Modules`. Module like Posts, Comments are separated from the core features like User, Role, Permission
 
 
-## Core Features
+### All features
 
 * User Authentication
 * Social Login
-  * Google
   * Facebook
   * Github
   * Build in a way adding more is much easy now
@@ -94,13 +53,11 @@ It is a modular application, and a number of modules are installed by default. I
   * Separate User Profile table
 * Role-Permissions for Users
 * Dynamic Menu System
-* Language Switcher
-* Localization enable across the porject
 * Backend Theme
-  * Bootstrap 5, CoreUI
-  * Fontawesome 6
+  * Bootstrap 4, CoreUI
+  * Fontawesome 5
 * Frontend Theme
-  * Tailwind
+  * Bootstrap 4, Now UI Kit
   * Fontawesome 5
 * Article Module
   * Posts
@@ -108,72 +65,57 @@ It is a modular application, and a number of modules are installed by default. I
   * Tags
   * Comments
   * wysiwyg editor
-  * File browser
+  * file browser
 * Application Settings
 * External Libraries
-  * Bootstrap 5
-  * Fontawesome 6
+  * Bootstrap 4
+  * Fontawesome 5
   * CoreUI
-  * Tailwind
+  * Now UI Kit
   * Datatables
   * Select2
   * Date Time Picker
 * Backup (Source, Files, Database as Zip)
 * Log Viewer
+* Newsletter
 * Notification
   * Dashboard and details view
-
-
-# User Guide
+* RSS Feed
 
 ## Installation
 
-Follow the steps mentioned below to install and run the project. You may find more details about the installation in [Installation Wiki](https://github.com/nasirkhan/laravel-starter/wiki/Installation).
+Follow the steps mentioned below to install and run the project.
 
 1. Clone or download the repository
 2. Go to the project directory and run `composer install`
-3. Create `.env` file by copying the `.env.example`. You may use the command to do that `cp .env.example .env`
-4. Update the database name and credentials in `.env` file
-5. Run the command `php artisan migrate --seed`
-6. Link storage directory: `php artisan storage:link`
-7. You may create a virtualhost entry to access the application or run `php artisan serve` from the project root and visit `http://127.0.0.1:8000`
+3. Create `.env` file by copying the `.env.example`. You may use the command to to that `cp .env.example .env`
+4. Update the database name and credentials
+5. Run the command `php artisan migrate -seed`
+6. You may create a virtualhost entry to access the application or run `php artisan serve` and visit `http://127.0.0.1:8000`
+
+### Set Module Permissions
+1. Set Permissions for Posts, Categories, Tags: `php artisan article:create-permissions`
+1. Set Permissions for Newsletter:  `php artisan newsletter:create-permissions`
 
 *After creating the new permissions use the following commands to update cashed permissions.*
 
 `php artisan cache:forget spatie.permission.cache`
 
-## Docker and Laravel Sail
-This project is configured with Laravel Sail (https://laravel.com/docs/9.x/sail). You can use all the docker functionalities here.
-
-## Icons
-FontAwesome & CoreUI Icons, two different font icon library is installed for the Backend theme and only FontAwesome for the Frontend. For both of the cases we used the free version. You may install the pro version separately for your own project.
-
-* **FontAwesome** - https://fontawesome.com/search?m=free
-* **CoreUI Icons** - https://icons.coreui.io/icons/
+### Seed Sample Data (Optional & should use only on testing)
+1. Add sample data on Posts, Categories, Tags with the following command `php artisan article:create-sample-data`
+1. Add sample data on Newsletter with the following command `php artisan newsletter:create-sample-data`
 
 
-# Screenshots
+## Screenshots
 
 __Home Page__
 
-![Laravel Starter Home](https://user-images.githubusercontent.com/396987/164892584-733afddc-8eab-4152-bd4a-d9c2f9e312d5.png)
+![Laravel Starter Home](https://user-images.githubusercontent.com/396987/67085331-74606500-f1c0-11e9-8187-99fe49134075.png)
 
 __Login Page__
 
-![Laravel Starter Login](https://user-images.githubusercontent.com/396987/164892620-3b4c8b1b-81c8-4630-a39f-38dadff89a7d.png)
-
-__Posts Page__
-
-![Laravel Starter Posts Page](https://user-images.githubusercontent.com/396987/164892767-2f961466-e346-4990-a183-655ce5a6603b.png)
+![Laravel Starter Login](https://user-images.githubusercontent.com/396987/67085329-74606500-f1c0-11e9-8669-3638e30cb449.png)
 
 __Backend Dashboard__
 
-![Backend Dashboard](https://user-images.githubusercontent.com/396987/164915155-c2984b18-ae96-408a-820a-cbcac2cceb10.png)
-
----
-
-![List-Posts-Laravel-Starter](https://user-images.githubusercontent.com/396987/88519250-a0dcc380-d013-11ea-9dc5-9d731af611f1.jpg)
-
----
-
-![Edit-Posts-Laravel-Starter](https://user-images.githubusercontent.com/396987/88519360-d1bcf880-d013-11ea-9f6c-b5d33912057f.jpg)
+![Backend Dashboard](https://user-images.githubusercontent.com/396987/66694968-4e2c5800-ecdc-11e9-82a6-585d2082f4d1.png)

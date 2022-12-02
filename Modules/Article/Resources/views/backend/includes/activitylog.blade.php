@@ -61,7 +61,7 @@
                                         </td>
                                         <td>
                                             Updated: {{$activity->updated_at->diffForHumans()}}<br>
-                                            At: {{$activity->updated_at->isoFormat('llll')}}
+                                            At: {{$activity->updated_at->toDayDateTimeString()}}
                                         </td>
                                         <td>
                                             {{ label_case($activity->causer_id) }}

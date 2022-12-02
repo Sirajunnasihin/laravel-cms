@@ -1,20 +1,20 @@
 <?php
 /**
- * @var  Arcanedev\LogViewer\Entities\Log                                                                     $log
- * @var  Illuminate\Pagination\LengthAwarePaginator|array<string|int, Arcanedev\LogViewer\Entities\LogEntry>  $entries
- * @var  string|null                                                                                          $query
+ * @var  Arcanedev\LogViewer\Entities\Log            $log
+ * @var  Illuminate\Pagination\LengthAwarePaginator  $entries
+ * @var  string|null                                 $query
  */
 ?>
 
 @extends('log-viewer::bootstrap-3._master')
 
 @section('content')
-    <h1 class="page-header">@lang('Log') [{{ $log->date }}]</h1>
+    <h1 class="page-header">Log [{{ $log->date }}]</h1>
 
     <div class="row">
         <div class="col-md-2">
             <div class="panel panel-default">
-                <div class="panel-heading"><i class="fa fa-fw fa-flag"></i> @lang('Levels')</div>
+                <div class="panel-heading"><i class="fa fa-fw fa-flag"></i> Levels</div>
                 <ul class="list-group">
                     @foreach($log->menu() as $levelKey => $item)
                         @if ($item['count'] === 0)
@@ -42,14 +42,14 @@
             {{-- Log Details --}}
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    @lang('Log info') :
+                    Log info :
 
                     <div class="group-btns pull-right">
                         <a href="{{ route('log-viewer::logs.download', [$log->date]) }}" class="btn btn-xs btn-success">
-                            <i class="fa fa-download"></i> @lang('Download')
+                            <i class="fa fa-download"></i> DOWNLOAD
                         </a>
                         <a href="#delete-log-modal" class="btn btn-xs btn-danger" data-toggle="modal">
-                            <i class="fa fa-trash-o"></i> @lang('Delete')
+                            <i class="fa fa-trash-o"></i> DELETE
                         </a>
                     </div>
                 </div>
@@ -57,25 +57,25 @@
                     <table class="table table-condensed">
                         <thead>
                             <tr>
-                                <td>@lang('File path') :</td>
+                                <td>File path :</td>
                                 <td colspan="5">{{ $log->getPath() }}</td>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>@lang('Log entries') :</td>
+                                <td>Log entries :</td>
                                 <td>
                                     <span class="label label-primary">{{ $entries->total() }}</span>
                                 </td>
-                                <td>@lang('Size') :</td>
+                                <td>Size :</td>
                                 <td>
                                     <span class="label label-primary">{{ $log->size() }}</span>
                                 </td>
-                                <td>@lang('Created at') :</td>
+                                <td>Created at :</td>
                                 <td>
                                     <span class="label label-primary">{{ $log->createdAt() }}</span>
                                 </td>
-                                <td>@lang('Updated at') :</td>
+                                <td>Updated at :</td>
                                 <td>
                                     <span class="label label-primary">{{ $log->updatedAt() }}</span>
                                 </td>
@@ -88,11 +88,11 @@
                     <form action="{{ route('log-viewer::logs.search', [$log->date, $level]) }}" method="GET">
                         <div class=form-group">
                             <div class="input-group">
-                                <input id="query" name="query" class="form-control" value="{{ $query }}" placeholder="@lang('Type here to search')">
+                                <input id="query" name="query" class="form-control" value="{{ $query }}" placeholder="Type here to search">
                                 <span class="input-group-btn">
                                     @unless (is_null($query))
                                         <a href="{{ route('log-viewer::logs.show', [$log->date]) }}" class="btn btn-default">
-                                            (@lang(':count results', ['count' => $entries->count()])) <span class="glyphicon glyphicon-remove"></span>
+                                            ({{ $entries->count() }} results) <span class="glyphicon glyphicon-remove"></span>
                                         </a>
                                     @endunless
                                     <button id="search-btn" class="btn btn-primary">
@@ -112,7 +112,7 @@
                         {{ $entries->appends(compact('query'))->render() }}
 
                         <span class="label label-info pull-right">
-                            {{ __('Page :current of :last', ['current' => $entries->currentPage(), 'last' => $entries->lastPage()]) }}
+                            Page {{ $entries->currentPage() }} of {{ $entries->lastPage() }}
                         </span>
                     </div>
                 @endif
@@ -121,15 +121,16 @@
                     <table id="entries" class="table table-condensed">
                         <thead>
                             <tr>
-                                <th>@lang('ENV')</th>
-                                <th style="width: 120px;">@lang('Level')</th>
-                                <th style="width: 65px;">@lang('Time')</th>
-                                <th>@lang('Header')</th>
-                                <th class="text-end">@lang('Actions')</th>
+                                <th>ENV</th>
+                                <th style="width: 120px;">Level</th>
+                                <th style="width: 65px;">Time</th>
+                                <th>Header</th>
+                                <th class="text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($entries as $key => $entry)
+                                <?php /** @var  Arcanedev\LogViewer\Entities\LogEntry  $entry */ ?>
                                 <tr>
                                     <td>
                                         <span class="label label-env">{{ $entry->env }}</span>
@@ -145,18 +146,18 @@
                                     <td>
                                         <p>{{ $entry->header }}</p>
                                     </td>
-                                    <td class="text-end">
+                                    <td class="text-right">
                                         @if ($entry->hasStack())
                                         <a class="btn btn-xs btn-default" role="button" data-toggle="collapse"
                                            href="#log-stack-{{ $key }}" aria-expanded="false" aria-controls="log-stack-{{ $key }}">
-                                            <i class="fa fa-toggle-on"></i> @lang('Stack')
+                                            <i class="fa fa-toggle-on"></i> Stack
                                         </a>
                                         @endif
 
                                         @if ($entry->hasContext())
                                         <a class="btn btn-xs btn-default" role="button" data-toggle="collapse"
                                            href="#log-context-{{ $key }}" aria-expanded="false" aria-controls="log-context-{{ $key }}">
-                                            <i class="fa fa-toggle-on"></i> @lang('Context')
+                                            <i class="fa fa-toggle-on"></i> Context
                                         </a>
                                         @endif
                                     </td>
@@ -181,7 +182,7 @@
                             @empty
                                 <tr>
                                     <td colspan="5" class="text-center">
-                                        <span class="label label-default">@lang('The list of logs is empty!')</span>
+                                        <span class="label label-default">{{ trans('log-viewer::general.empty-logs') }}</span>
                                     </td>
                                 </tr>
                             @endforelse
@@ -194,7 +195,7 @@
                         {!! $entries->appends(compact('query'))->render() !!}
 
                         <span class="label label-info pull-right">
-                            @lang('Page :current of :last', ['current' => $entries->currentPage(), 'last' => $entries->lastPage()])
+                            Page {{ $entries->currentPage() }} of {{ $entries->lastPage() }}
                         </span>
                     </div>
                 @endif
@@ -216,14 +217,14 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 class="modal-title">@lang('Delete log file')</h4>
+                        <h4 class="modal-title">DELETE LOG FILE</h4>
                     </div>
                     <div class="modal-body">
-                        <p>@lang('Are you sure you want to delete this log file: :date ?', ['date' => $log->date])</p>
+                        <p>Are you sure you want to <span class="label label-danger">DELETE</span> this log file <span class="label label-primary">{{ $log->date }}</span> ?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-default pull-left" data-dismiss="modal">@lang('Cancel')</button>
-                        <button type="submit" class="btn btn-sm btn-danger" data-loading-text="@lang('Loading')&hellip;">@lang('Delete')</button>
+                        <button type="button" class="btn btn-sm btn-default pull-left" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-danger" data-loading-text="Loading&hellip;">DELETE FILE</button>
                     </div>
                 </div>
             </form>

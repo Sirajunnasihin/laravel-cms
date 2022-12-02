@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Authorizable;
-use App\Events\Frontend\UserProfileUpdated;
+use App\Events\Frontend\User\UserProfileUpdated;
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Userprofile;
 use App\Models\UserProvider;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Log;
 
 class UserController extends Controller
 {
@@ -41,7 +41,8 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function show($username)
@@ -70,25 +71,25 @@ class UserController extends Controller
     /**
      * Display Profile Details of Logged in user.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function profile($id)
+    public function profile($username)
     {
-        $id = decode_id($id);
-
         $module_title = $this->module_title;
         $module_name = $this->module_name;
         $module_path = $this->module_path;
         $module_icon = $this->module_icon;
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
-        $module_action = 'Profile';
 
-        $$module_name_singular = $module_model::findOrFail($id);
+        $module_action = 'Show';
+
+        $$module_name_singular = $module_model::where('username', 'LIKE', $username)->first();
 
         if ($$module_name_singular) {
-            $userprofile = Userprofile::where('user_id', $id)->first();
+            $userprofile = Userprofile::where('user_id', $$module_name_singular->id)->first();
         } else {
             Log::error('UserProfile Exception for Username: '.$username);
             abort(404);
@@ -104,13 +105,12 @@ class UserController extends Controller
     /**
      * Show the form for Profile Paeg Editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function profileEdit($id)
+    public function profileEdit($username)
     {
-        $id = decode_id($id);
-
         $module_title = $this->module_title;
         $module_name = $this->module_name;
         $module_path = $this->module_path;
@@ -123,16 +123,12 @@ class UserController extends Controller
         $page_heading = ucfirst($module_title);
         $title = $page_heading.' '.ucfirst($module_action);
 
-        if (! auth()->user()->can('edit_users')) {
-            $id = auth()->user()->id;
+        if (!auth()->user()->can('edit_users')) {
+            $username = auth()->user()->username;
         }
 
-        if ($id != auth()->user()->id) {
-            return redirect()->route('frontend.users.profile', $id);
-        }
-
-        $$module_name_singular = $module_model::findOrFail($id);
-        $userprofile = Userprofile::where('user_id', $id)->first();
+        $$module_name_singular = $module_model::where('username', 'LIKE', $username)->first();
+        $userprofile = Userprofile::where('user_id', $$module_name_singular->id)->first();
 
         $body_class = 'profile-page';
 
@@ -145,11 +141,12 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function profileUpdate(Request $request, $id)
+    public function profileUpdate(Request $request, $username)
     {
         $module_title = $this->module_title;
         $module_name = $this->module_name;
@@ -159,25 +156,20 @@ class UserController extends Controller
         $module_name_singular = Str::singular($module_name);
         $module_action = 'Profile Update';
 
-        if ($id != auth()->user()->id) {
-            return redirect()->route('frontend.users.profile', $id);
-        }
-
         $this->validate($request, [
-            'first_name' => 'required|string|max:191',
-            'last_name'  => 'required|string|max:191',
-            'avatar'     => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $module_name = $this->module_name;
         $module_name_singular = Str::singular($this->module_name);
 
-        if (! auth()->user()->can('edit_users')) {
+        if (!auth()->user()->can('edit_users')) {
             $id = auth()->user()->id;
             $username = auth()->user()->username;
         }
 
-        $$module_name_singular = $module_model::findOrFail($id);
+        $$module_name_singular = $module_model::where('username', 'LIKE', $username)->first();
+        $filename = $$module_name_singular->avatar;
 
         // Handle Avatar upload
         if ($request->hasFile('avatar')) {
@@ -185,7 +177,7 @@ class UserController extends Controller
                 $$module_name_singular->getMedia($module_name)->first()->delete();
             }
 
-            $media = $$module_name_singular->addMedia($request->file('avatar'))->toMediaCollection($module_name);
+            $media = $$module_name_singular->addMediaFromRequest('avatar')->toMediaCollection($module_name);
 
             $$module_name_singular->avatar = $media->getUrl();
 
@@ -201,53 +193,47 @@ class UserController extends Controller
 
         event(new UserProfileUpdated($user_profile));
 
-        return redirect()->route('frontend.users.profile', $$module_name_singular->id)->with('flash_success', 'Update successful!');
+        return redirect()->route('frontend.users.profile', $$module_name_singular->username)->with('flash_success', 'Update successful!');
     }
 
     /**
      * Show the form for Profile Paeg Editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function changePassword($id)
+    public function changePassword($username)
     {
+        $title = $this->module_title;
+
         $module_title = $this->module_title;
         $module_name = $this->module_name;
         $module_path = $this->module_path;
         $module_icon = $this->module_icon;
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
-        $module_action = 'change Password';
+        $module_action = 'Edit';
+
+        $username = auth()->user()->username;
+
+        $$module_name_singular = $module_model::where('username', 'LIKE', $username)->first();
 
         $body_class = 'profile-page';
 
-        if ($id != auth()->user()->id) {
-            return redirect()->route('frontend.users.profile', $id);
-        }
-
-        $id = auth()->user()->id;
-
-        $$module_name_singular = $module_model::findOrFail($id);
-
-        $body_class = 'profile-page';
-
-        return view("frontend.$module_name.changePassword", compact('module_title', 'module_name', 'module_path', 'module_icon', 'module_action', 'module_name_singular', "$module_name_singular", 'body_class'));
+        return view("frontend.$module_name.changePassword", compact('module_name', "$module_name_singular", 'module_icon', 'module_action', 'title', 'body_class'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function changePasswordUpdate(Request $request, $username)
     {
-        if ($username != auth()->user()->username) {
-            return redirect()->route('frontend.users.profile', $username);
-        }
-
         $this->validate($request, [
             'password' => 'required|confirmed|min:6',
         ]);
@@ -262,13 +248,14 @@ class UserController extends Controller
 
         $$module_name_singular->update($request_data);
 
-        return redirect()->route('frontend.users.profile', auth()->user()->id)->with('flash_success', 'Update successful!');
+        return redirect()->route('frontend.users.profile', auth()->user()->username)->with('flash_success', 'Update successful!');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -280,10 +267,6 @@ class UserController extends Controller
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
         $module_action = 'Edit';
-
-        if ($id != auth()->user()->id) {
-            return redirect()->route('frontend.users.profile', $id);
-        }
 
         $roles = Role::get();
         $permissions = Permission::select('name', 'id')->get();
@@ -301,18 +284,15 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         $module_name = $this->module_name;
         $module_name_singular = Str::singular($this->module_name);
-
-        if ($id != auth()->user()->id) {
-            return redirect()->route('frontend.users.profile', $id);
-        }
 
         $$module_name_singular = User::findOrFail($id);
 
@@ -357,7 +337,7 @@ class UserController extends Controller
         $user_provider_id = $request->user_provider_id;
         $user_id = $request->user_id;
 
-        if (! $user_provider_id > 0 || ! $user_id > 0) {
+        if (!$user_provider_id > 0 || !$user_id > 0) {
             flash('Invalid Request. Please try again.')->error();
 
             return redirect()->back();
@@ -375,13 +355,14 @@ class UserController extends Controller
             }
         }
 
-        throw new Exception('There was a problem updating this user. Please try again.');
+        throw new GeneralException('There was a problem updating this user. Please try again.');
     }
 
     /**
      * Resend Email Confirmation Code to User.
      *
      * @param [type] $hashid [description]
+     *
      * @return [type] [description]
      */
     public function emailConfirmationResend($id)
@@ -411,7 +392,7 @@ class UserController extends Controller
             } else {
                 Log::info($user->name.' ('.$user->id.') - User Requested but Email already verified at.'.$user->email_verified_at);
 
-                flash($user->name.', You already confirmed your email address at '.$user->email_verified_at->isoFormat('LL'))->success()->important();
+                flash($user->name.', You already confirmed your email address at '.$user->email_verified_at->toFormattedDateString())->success()->important();
 
                 return redirect()->back();
             }

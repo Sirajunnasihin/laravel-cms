@@ -53,7 +53,8 @@ class PostsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function show($hashid)
@@ -71,7 +72,7 @@ class PostsController extends Controller
 
         $meta_page_type = 'article';
 
-        $$module_name_singular = $module_model::findOrFail($id);
+        $$module_name_singular = $module_model::with(['category', 'tags', 'comments'])->findOrFail($id);
 
         event(new PostViewed($$module_name_singular));
 

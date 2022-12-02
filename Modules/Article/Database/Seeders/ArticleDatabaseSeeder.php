@@ -2,13 +2,14 @@
 
 namespace Modules\Article\Database\Seeders;
 
+use Artisan;
+use Auth;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\Article\Entities\Category;
+use Modules\Article\Entities\Comment;
 use Modules\Article\Entities\Post;
-use Modules\Tag\Entities\Tag;
+use Modules\Article\Entities\Tag;
 
 class ArticleDatabaseSeeder extends Seeder
 {
@@ -31,8 +32,23 @@ class ArticleDatabaseSeeder extends Seeder
         DB::table('categories')->truncate();
         echo "\nTruncate: categories \n";
 
-        Category::factory()->count(5)->create();
-        echo " Insert: categories \n\n";
+        factory(Category::class, 5)->create();
+        echo " Insert: categories \n";
+
+        /*
+         * Tags Seed
+         * ------------------
+         */
+
+        DB::table('post_tag')->truncate();
+        echo "Truncate: post_tag \n";
+
+        DB::table('tags')->truncate();
+        echo "Truncate: tags \n";
+
+        factory(Tag::class, 10)->create();
+        $tags = Tag::all();
+        echo " Insert: tags \n";
 
         /*
          * Posts Seed
@@ -42,11 +58,22 @@ class ArticleDatabaseSeeder extends Seeder
         echo "Truncate: posts \n";
 
         // Populate the pivot table
-        Post::factory()
-                ->has(Tag::factory()->count(rand(1, 5)))
-                ->count(25)
-                ->create();
-        echo " Insert: posts \n\n";
+        factory(Post::class, 25)->create()->each(function ($post) use ($tags) {
+            $post->tags()->attach(
+                $tags->random(rand(1, 3))->pluck('id')->toArray()
+            );
+        });
+        echo " Insert: posts \n";
+
+        /*
+         * Comment Seed
+         * ------------------
+         */
+        DB::table('comments')->truncate();
+        echo "Truncate: comments \n";
+
+        factory(Comment::class, 50)->create();
+        echo " Insert: comments \n";
 
         // Artisan::call('auth:permission', [
         //     'name' => 'posts',

@@ -4,12 +4,10 @@ namespace Modules\Article\Entities;
 
 use App\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends BaseModel
 {
-    use HasFactory;
     use SoftDeletes;
 
     protected $table = 'categories';
@@ -35,15 +33,5 @@ class Category extends BaseModel
         if (empty($value) && $this->attributes['status'] == 1) {
             $this->attributes['published_at'] = Carbon::now();
         }
-    }
-
-    /**
-     * Create a new factory instance for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    protected static function newFactory()
-    {
-        return \Modules\Article\Database\Factories\CategoryFactory::new();
     }
 }

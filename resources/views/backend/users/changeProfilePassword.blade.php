@@ -1,47 +1,44 @@
 @extends ('backend.layouts.app')
 
 <?php
-$module_name_singular = \Illuminate\Support\Str::singular($module_name);
+$module_name_singular = Str::singular($module_name);
 ?>
 
-@section('title') {{ __($module_action) }} {{ __($module_title) }} @endsection
-
-@section('breadcrumbs')
-<x-backend-breadcrumbs>
-    <x-backend-breadcrumb-item route='{{route("backend.$module_name.index")}}' icon='{{ $module_icon }}'>
-        {{ __($module_title) }}
-    </x-backend-breadcrumb-item>
-
-    <x-backend-breadcrumb-item type="active">{{__('Change Password')}}</x-backend-breadcrumb-item>
-</x-backend-breadcrumbs>
-@endsection
+@section ('title', __("labels.backend.$module_name.".strtolower($module_action).".title") . " - " . __("labels.backend.$module_name.".strtolower($module_action).".action"))
 
 @section('content')
 <div class="card">
     <div class="card-body">
-        <x-backend.section-header>
-            <i class="{{ $module_icon }}"></i> {{ __($module_title) }} <small class="text-muted">{{ __($module_action) }}</small>
-
-            <x-slot name="subtitle">
-                @lang(":module_name Management Dashboard", ['module_name'=>Str::title($module_name)])
-            </x-slot>
-            <x-slot name="toolbar">
-                <x-backend.buttons.return-back />
-            </x-slot>
-        </x-backend.section-header>
-
+        <div class="row">
+            <div class="col-8">
+                <h4 class="card-title mb-0">
+                    <i class="{{$module_icon}}"></i> Profile
+                    <small class="text-muted">Change Password </small>
+                </h4>
+                <div class="small text-muted">
+                    {{ __('labels.backend.users.edit.sub-title') }}
+                </div>
+            </div>
+            <!--/.col-->
+            <div class="col-4">
+                <div class="btn-toolbar float-right" role="toolbar" aria-label="Toolbar with button groups">
+                    <button onclick="window.history.back();"class="btn btn-warning ml-1" data-toggle="tooltip" title="Return Back"><i class="fas fa-reply"></i></button>
+                </div>
+            </div>
+            <!--/.col-->
+        </div>
+        <!--/.row-->
         <hr>
-
         <div class="row">
             <div class="col">
                 <strong>
-                    @lang('Name'):
+                    Name:
                 </strong>
                 {{ $$module_name_singular->name }}
             </div>
             <div class="col">
                 <strong>
-                    @lang('Email'):
+                    Email:
                 </strong>
                 {{ $$module_name_singular->email }}
             </div>
@@ -59,8 +56,7 @@ $module_name_singular = \Illuminate\Support\Str::singular($module_name);
                             ->placeholder(__('labels.backend.users.fields.password'))
                             ->required() }}
                     </div>
-                </div>
-                <!--form-group-->
+                </div><!--form-group-->
 
                 <div class="form-group row">
                     {{ html()->label(__('labels.backend.users.fields.password_confirmation'))->class('col-md-2 form-control-label')->for('password_confirmation') }}
@@ -71,8 +67,7 @@ $module_name_singular = \Illuminate\Support\Str::singular($module_name);
                             ->placeholder(__('labels.backend.users.fields.password_confirmation'))
                             ->required() }}
                     </div>
-                </div>
-                <!--form-group-->
+                </div><!--form-group-->
 
                 <div class="row">
                     <div class="col">
@@ -91,12 +86,15 @@ $module_name_singular = \Illuminate\Support\Str::singular($module_name);
         </div>
         <!--/.row-->
     </div>
-    
     <div class="card-footer">
-        <x-backend.section-footer>
-            @lang('Updated'): {{$$module_name_singular->updated_at->diffForHumans()}},
-            @lang('Created at'): {{$$module_name_singular->created_at->isoFormat('LLLL')}}
-        </x-backend.section-footer>
+        <div class="row">
+            <div class="col">
+                <small class="float-right text-muted">
+                    Updated: {{$user->updated_at->diffForHumans()}},
+                    Created at: {{$user->created_at->toCookieString()}}
+                </small>
+            </div>
+        </div>
     </div>
 </div>
 

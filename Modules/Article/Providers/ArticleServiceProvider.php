@@ -2,8 +2,8 @@
 
 namespace Modules\Article\Providers;
 
+use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Component\Finder\Finder;
 
 class ArticleServiceProvider extends ServiceProvider
 {
@@ -17,14 +17,12 @@ class ArticleServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
+        $this->registerFactories();
         $this->loadMigrationsFrom(module_path('Article', 'Database/Migrations'));
 
         // adding global middleware
         $kernel = $this->app->make('Illuminate\Contracts\Http\Kernel');
         $kernel->pushMiddleware('Modules\Article\Http\Middleware\GenerateMenus');
-
-        // register commands
-        $this->registerCommands('\Modules\Article\Console');
     }
 
     /**
@@ -90,22 +88,15 @@ class ArticleServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register commands.
+     * Register an additional directory of factories.
      *
-     * @param  string  $namespace
+     * @return void
      */
-    protected function registerCommands($namespace = '')
+    public function registerFactories()
     {
-        $finder = new Finder(); // from Symfony\Component\Finder;
-        $finder->files()->name('*.php')->in(__DIR__.'/../Console');
-
-        $classes = [];
-        foreach ($finder as $file) {
-            $class = $namespace.'\\'.$file->getBasename('.php');
-            array_push($classes, $class);
+        if (!app()->environment('production') && $this->app->runningInConsole()) {
+            app(Factory::class)->load(module_path('Article', 'Database/factories'));
         }
-
-        $this->commands($classes);
     }
 
     /**

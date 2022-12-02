@@ -13,7 +13,6 @@ class UserCreated
     use Dispatchable;
     use InteractsWithSockets;
     use SerializesModels;
-
     public $user;
 
     /**

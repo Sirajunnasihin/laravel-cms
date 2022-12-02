@@ -3,22 +3,23 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 
 class GenerateMenus
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         \Menu::make('admin_sidebar', function ($menu) {
             // Dashboard
-            $menu->add('<i class="nav-icon cil-speedometer"></i> '.__('Dashboard'), [
+            $menu->add('<i class="nav-icon icon-speedometer"></i> Dashboard', [
                 'route' => 'backend.dashboard',
                 'class' => 'nav-item',
             ])
@@ -82,8 +83,8 @@ class GenerateMenus
             ]);
 
             // Access Control Dropdown
-            $accessControl = $menu->add('<i class="nav-icon cil-shield-alt"></i> Access Control', [
-                'class' => 'nav-group',
+            $accessControl = $menu->add('<i class="nav-icon icon-key"></i> Access Control', [
+                'class' => 'nav-item nav-dropdown',
             ])
             ->data([
                 'order'         => 104,
@@ -94,12 +95,12 @@ class GenerateMenus
                 'permission'    => ['view_users', 'view_roles'],
             ]);
             $accessControl->link->attr([
-                'class' => 'nav-link nav-group-toggle',
+                'class' => 'nav-link nav-dropdown-toggle',
                 'href'  => '#',
             ]);
 
             // Submenu: Users
-            $accessControl->add('<i class="nav-icon cil-people"></i> Users', [
+            $accessControl->add('<i class="nav-icon icon-people"></i> Users', [
                 'route' => 'backend.users.index',
                 'class' => 'nav-item',
             ])
@@ -113,7 +114,7 @@ class GenerateMenus
             ]);
 
             // Submenu: Roles
-            $accessControl->add('<i class="nav-icon cil-people"></i> Roles', [
+            $accessControl->add('<i class="nav-icon icon-people"></i> Roles', [
                 'route' => 'backend.roles.index',
                 'class' => 'nav-item',
             ])
@@ -128,8 +129,8 @@ class GenerateMenus
 
             // Log Viewer
             // Log Viewer Dropdown
-            $accessControl = $menu->add('<i class="nav-icon cil-list-rich"></i> Log Viewer', [
-                'class' => 'nav-group',
+            $accessControl = $menu->add('<i class="nav-icon fas fa-list"></i> Log Viewer', [
+                'class' => 'nav-item nav-dropdown',
             ])
             ->data([
                 'order'         => 107,
@@ -139,12 +140,12 @@ class GenerateMenus
                 'permission'    => ['view_logs'],
             ]);
             $accessControl->link->attr([
-                'class' => 'nav-link nav-group-toggle',
+                'class' => 'nav-link nav-dropdown-toggle',
                 'href'  => '#',
             ]);
 
             // Submenu: Log Viewer Dashboard
-            $accessControl->add('<i class="nav-icon cil-list"></i> Dashboard', [
+            $accessControl->add('<i class="nav-icon fas fa-list"></i> Dashboard', [
                 'route' => 'log-viewer::dashboard',
                 'class' => 'nav-item',
             ])
@@ -157,7 +158,7 @@ class GenerateMenus
             ]);
 
             // Submenu: Log Viewer Logs by Days
-            $accessControl->add('<i class="nav-icon cil-list-numbered"></i> Logs by Days', [
+            $accessControl->add('<i class="nav-icon fas fa-list-ol"></i> Logs by Days', [
                 'route' => 'log-viewer::logs.list',
                 'class' => 'nav-item',
             ])
@@ -189,14 +190,17 @@ class GenerateMenus
             // Set Active Menu
             $menu->filter(function ($item) {
                 if ($item->activematches) {
-                    $activematches = (is_string($item->activematches)) ? [$item->activematches] : $item->activematches;
-                    foreach ($activematches as $pattern) {
-                        if (request()->is($pattern)) {
+                    $matches = is_array($item->activematches) ? $item->activematches : [$item->activematches];
+
+                    foreach ($matches as $pattern) {
+                        if (Str::is($pattern, \Request::path())) {
+                            $item->activate();
                             $item->active();
-                            $item->link->active();
                             if ($item->hasParent()) {
+                                $item->parent()->activate();
                                 $item->parent()->active();
                             }
+                            // dd($pattern);
                         }
                     }
                 }

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Cache;
 
 class Setting extends BaseModel
 {
@@ -16,7 +15,8 @@ class Setting extends BaseModel
      *
      * @param $key
      * @param $val
-     * @param  string  $type
+     * @param string $type
+     *
      * @return bool
      */
     public static function add($key, $val, $type = 'string')
@@ -32,7 +32,8 @@ class Setting extends BaseModel
      * Get a settings value.
      *
      * @param $key
-     * @param  null  $default
+     * @param null $default
+     *
      * @return bool|int|mixed
      */
     public static function get($key, $default = null)
@@ -51,7 +52,8 @@ class Setting extends BaseModel
      *
      * @param $key
      * @param $val
-     * @param  string  $type
+     * @param string $type
+     *
      * @return bool
      */
     public static function set($key, $val, $type = 'string')
@@ -70,6 +72,7 @@ class Setting extends BaseModel
      * Remove a setting.
      *
      * @param $key
+     *
      * @return bool
      */
     public static function remove($key)
@@ -85,6 +88,7 @@ class Setting extends BaseModel
      * Check if setting exists.
      *
      * @param $key
+     *
      * @return bool
      */
     public static function has($key)
@@ -109,6 +113,7 @@ class Setting extends BaseModel
      * Get the data type of a setting.
      *
      * @param $field
+     *
      * @return mixed
      */
     public static function getDataType($field)
@@ -124,6 +129,7 @@ class Setting extends BaseModel
      * Get default value for a setting.
      *
      * @param $field
+     *
      * @return mixed
      */
     public static function getDefaultValueForField($field)
@@ -138,6 +144,7 @@ class Setting extends BaseModel
      *
      * @param $key
      * @param $default
+     *
      * @return mixed
      */
     private static function getDefaultValue($key, $default)
@@ -160,6 +167,7 @@ class Setting extends BaseModel
      *
      * @param $val
      * @param $castTo
+     *
      * @return bool|int
      */
     private static function castValue($val, $castTo)
@@ -187,7 +195,7 @@ class Setting extends BaseModel
      */
     public static function getAllSettings()
     {
-        return Cache::rememberForever('settings.all', function () {
+        return \Cache::rememberForever('settings.all', function () {
             return self::all();
         });
     }
@@ -197,7 +205,7 @@ class Setting extends BaseModel
      */
     public static function flushCache()
     {
-        Cache::forget('settings.all');
+        \Cache::forget('settings.all');
     }
 
     /**

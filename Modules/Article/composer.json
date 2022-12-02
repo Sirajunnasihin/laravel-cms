@@ -1,12 +1,10 @@
 {
-    "name": "nasirkhan/article-module",
-    "description": "Article module with Posts, Categories, Tags, Comments. It works with nasirkhan/laravel-starter",
-    "type": "laravel-module",
-    "version": "v3.0.0",
+    "name": "nwidart/article",
+    "description": "",
     "authors": [
         {
-            "name": "Nasir Khan",
-            "email": "nasir8891@gmail.com"
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
         }
     ],
     "extra": {

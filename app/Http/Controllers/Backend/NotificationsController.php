@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use Auth;
 use Carbon\Carbon;
+use Flash;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Laracasts\Flash\Flash;
+use Log;
 
 class NotificationsController extends Controller
 {
@@ -25,7 +25,7 @@ class NotificationsController extends Controller
         $this->module_path = 'notifications';
 
         // module icon
-        $this->module_icon = 'c-icon fas fa-bell';
+        $this->module_icon = 'fas fa-bell';
 
         // module model name, path
         $this->module_model = "App\Models\User";
@@ -61,7 +61,8 @@ class NotificationsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function show($id)
@@ -77,14 +78,9 @@ class NotificationsController extends Controller
 
         $$module_name_singular = Notification::where('id', '=', $id)->where('notifiable_id', '=', auth()->user()->id)->first();
 
-        if ($$module_name_singular) {
-            if ($$module_name_singular->read_at == '') {
-                $$module_name_singular->read_at = Carbon::now();
-                $$module_name_singular->save();
-            }
-        } else {
-            Log::info(label_case($module_title.' '.$module_action).' | User:'.Auth::user()->name.'(ID:'.Auth::user()->id.')');
-            abort(404);
+        if ($$module_name_singular->read_at == '') {
+            $$module_name_singular->read_at = Carbon::now();
+            $$module_name_singular->save();
         }
 
         Log::info(label_case($module_title.' '.$module_action).' | User:'.Auth::user()->name.'(ID:'.Auth::user()->id.')');
@@ -93,34 +89,6 @@ class NotificationsController extends Controller
             "backend.$module_name.show",
             compact('module_title', 'module_name', 'module_icon', 'module_name_singular', 'module_action', "$module_name_singular")
         );
-    }
-
-    /**
-     * Delete All the Notifications.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function deleteAll()
-    {
-        $module_title = $this->module_title;
-        $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
-        $module_model = $this->module_model;
-        $module_name_singular = Str::singular($module_name);
-
-        $module_action = 'Delete All';
-
-        $user = auth()->user();
-
-        $user->notifications()->delete();
-
-        Flash::success("<i class='fas fa-check'></i> All Notifications Deleted")->important();
-
-        Log::info(label_case($module_title.' '.$module_action).' | User:'.Auth::user()->name.'(ID:'.Auth::user()->id.')');
-
-        return back();
     }
 
     /**
@@ -139,9 +107,15 @@ class NotificationsController extends Controller
 
         $module_action = 'Mark All As Read';
 
-        $user = auth()->user();
+        $$module_name_singular = Notification::whereNull('read_at')->where('notifiable_id', '=', auth()->user()->id)->get();
+        // dd($$module_name_singular);
 
-        $user->unreadNotifications()->update(['read_at' => now()]);
+        foreach ($$module_name_singular as $row) {
+            if ($row->read_at == '') {
+                $row->read_at = Carbon::now();
+                $row->save();
+            }
+        }
 
         Flash::success("<i class='fas fa-check'></i> All Notifications Marked As Read")->important();
 

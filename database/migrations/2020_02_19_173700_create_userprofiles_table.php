@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateUserprofilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('userprofiles', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->integer('user_id');
 
             $table->string('name');
@@ -28,9 +28,12 @@ return new class extends Migration
             $table->string('url_website')->nullable();
             $table->string('url_facebook')->nullable();
             $table->string('url_twitter')->nullable();
-            $table->string('url_instagram')->nullable();
             $table->string('url_linkedin')->nullable();
+            $table->string('url_1')->nullable();
+            $table->string('url_2')->nullable();
+            $table->string('url_3')->nullable();
 
+            $table->string('profile_privecy')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->text('address')->nullable();
             $table->text('bio')->nullable();
@@ -59,4 +62,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('userprofiles');
     }
-};
+}

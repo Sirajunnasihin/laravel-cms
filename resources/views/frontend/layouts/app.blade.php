@@ -6,8 +6,8 @@
     <link rel="apple-touch-icon" sizes="76x76" href="{{asset('img/favicon.png')}}">
     <link rel="icon" type="image/png" href="{{asset('img/favicon.png')}}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>@yield('title') | {{ config('app.name') }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@yield('title') | {{ config('app.name', 'Laravel Starter') }}</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
     <meta name="description" content="{{ setting('meta_description') }}">
     <meta name="keyword" content="{{ setting('meta_keyword') }}">
 
@@ -22,24 +22,29 @@
 
     @stack('before-styles')
 
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+Bengali+UI&display=swap" rel="stylesheet" />
+
     <link rel="stylesheet" href="{{ mix('css/frontend.css') }}">
 
     @stack('after-styles')
 
-    <x-google-analytics />
 </head>
 
-<body>
+<body class="{{isset($body_class) ? $body_class : ''}} sidebar-collapse">
 
+    <!-- Header Block -->
     @include('frontend.includes.header')
+    <!-- / Header Block -->
 
+    <div class="wrapper">
 
-    <main>
         @yield('content')
-    </main>
 
-    @include('frontend.includes.footer')
-
+        <!-- Footer block -->
+        @include('frontend.includes.footer')
+        <!-- / Footer block -->
+    </div>
 </body>
 
 <!-- Scripts -->

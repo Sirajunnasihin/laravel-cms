@@ -4,13 +4,13 @@ namespace Modules\Article\Http\Controllers\Backend;
 
 use App\Authorizable;
 use App\Http\Controllers\Controller;
+use Auth;
 use Carbon\Carbon;
 use Flash;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Log;
 use Modules\Article\Entities\Category;
 use Modules\Article\Events\PostCreated;
 use Modules\Article\Events\PostUpdated;
@@ -56,7 +56,7 @@ class PostsController extends Controller
 
         $module_action = 'List';
 
-        $$module_name = $module_model::latest()->paginate();
+        $$module_name = $module_model::paginate();
 
         Log::info(label_case($module_title.' '.$module_action).' | User:'.Auth::user()->name.'(ID:'.Auth::user()->id.')');
 
@@ -88,7 +88,7 @@ class PostsController extends Controller
                             return view('backend.includes.action_column', compact('module_name', 'data'));
                         })
                         ->editColumn('name', function ($data) {
-                            $is_featured = ($data->is_featured) ? '<span class="badge bg-primary">Featured</span>' : '';
+                            $is_featured = ($data->is_featured) ? '<span class="badge badge-primary">Featured</span>' : '';
 
                             return $data->name.' '.$data->status_formatted.' '.$is_featured;
                         })
@@ -100,7 +100,7 @@ class PostsController extends Controller
                             if ($diff < 25) {
                                 return $data->updated_at->diffForHumans();
                             } else {
-                                return $data->updated_at->isoFormat('LLLL');
+                                return $data->updated_at->toCookieString();
                             }
                         })
                         ->rawColumns(['name', 'status', 'action'])
@@ -173,7 +173,8 @@ class PostsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return Response
      */
     public function store(PostsRequest $request)
@@ -205,7 +206,8 @@ class PostsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function show($id)
@@ -238,7 +240,8 @@ class PostsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function edit($id)
@@ -267,8 +270,9 @@ class PostsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  int  $id
+     * @param Request $request
+     * @param int     $id
+     *
      * @return Response
      */
     public function update(PostsRequest $request, $id)
@@ -305,7 +309,8 @@ class PostsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function destroy($id)
@@ -360,8 +365,9 @@ class PostsController extends Controller
     /**
      * Restore a soft deleted entry.
      *
-     * @param  Request  $request
-     * @param  int  $id
+     * @param Request $request
+     * @param int     $id
+     *
      * @return Response
      */
     public function restore($id)

@@ -1,20 +1,18 @@
 @extends ('backend.layouts.app')
 
 <?php
-$module_icon = "c-icon cil-list-rich";
+$module_icon = "fas fa-list";
 ?>
-
-@section('title') {{ __('Log Viewer Dashboard') }} @endsection
+@section('title')
+Log Viewer Dashboard | {{ app_name() }}
+@stop
 
 @section('breadcrumbs')
-<x-backend-breadcrumbs>
-    <x-backend-breadcrumb-item route="{{ route('log-viewer::dashboard') }}" icon='{{ $module_icon }}' >
-        {{ __('Log Viewer Dashboard') }}
-    </x-backend-breadcrumb-item>
-    <x-backend-breadcrumb-item route="{{ route('log-viewer::logs.list') }}">{{ __('Logs by Date') }}</x-backend-breadcrumb-item>
-    <x-backend-breadcrumb-item type="active">@lang('Log') [{{ $log->date }}]</x-backend-breadcrumb-item>
-</x-backend-breadcrumbs>
-@endsection
+<li class="breadcrumb-item"><a href="{!!route('backend.dashboard')!!}"><i class="icon-speedometer"></i> Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('log-viewer::dashboard') }}"><i class="{{$module_icon}}"></i> Log Viewer Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('log-viewer::logs.list') }}"><i class="{{$module_icon}}"></i> Log by Days</a></li>
+<li class="breadcrumb-item active"> Log [{{ $log->date }}]</li>
+@stop
 
 @section('content')
 <div class="card">
@@ -22,20 +20,22 @@ $module_icon = "c-icon cil-list-rich";
         <div class="row">
             <div class="col-8">
                 <h4 class="card-title mb-0">
-                    <i class="{{$module_icon}}"></i> @lang('Log') [{{ $log->date }}]
-                    <small class="text-muted"> @lang('Details') </small>
+                    <i class="{{$module_icon}}"></i> Log [{{ $log->date }}]
+                    <small class="text-muted">Details </small>
                 </h4>
                 <div class="small text-muted">
-                    @lang('Log Viewer Module')
+                    Log Viewer Module
                 </div>
             </div>
 
             <div class="col-4">
-                <div class="btn-toolbar float-end" role="toolbar" aria-label="Toolbar with button groups">
-                    <x-backend.buttons.return-back />
+                <div class="btn-toolbar float-right" role="toolbar" aria-label="Toolbar with button groups">
+                    <button onclick="window.history.back();"class="btn btn-warning ml-1" data-toggle="tooltip" title="Return Back"><i class="fas fa-reply"></i></button>
                 </div>
             </div>
+            <!--/.col-->
         </div>
+        <!--/.row-->
 
         <div class="row mt-4">
             <div class="col">
@@ -44,7 +44,7 @@ $module_icon = "c-icon cil-list-rich";
                     <div class="col-lg-2">
                         {{-- Log Menu --}}
                         <div class="card mb-4">
-                            <div class="card-header"><i class="fa fa-fw fa-flag"></i> @lang('Levels')</div>
+                            <div class="card-header"><i class="fa fa-fw fa-flag"></i> Levels</div>
                             <div class="list-group list-group-flush log-menu">
                                 @foreach($log->menu() as $levelKey => $item)
                                     @if ($item['count'] === 0)
@@ -62,20 +62,17 @@ $module_icon = "c-icon cil-list-rich";
                             </div>
                         </div>
                     </div>
-
                     <div class="col-lg-10">
                         {{-- Log Details --}}
                         <div class="card mb-4">
                             <div class="card-header">
-                                <strong>
-                                    @lang('Log Info')
-                                </strong>
-                                <div class="btn-toolbar float-end">
-                                    <a href="{{ route('log-viewer::logs.download', [$log->date]) }}" class="btn btn-success">
-                                        <i class="fas fa-download"></i>&nbsp;@lang('Download')
+                                Log info :
+                                <div class="group-btns pull-right">
+                                    <a href="{{ route('log-viewer::logs.download', [$log->date]) }}" class="btn btn-sm btn-success">
+                                        <i class="fa fa-download"></i> DOWNLOAD
                                     </a>
-                                    <a href="#delete-log-modal" class="btn btn-danger ms-1" data-coreui-toggle="modal">
-                                        <i class="fas fa-trash-alt"></i>&nbsp;@lang('Delete')
+                                    <a href="#delete-log-modal" class="btn btn-sm btn-danger" data-toggle="modal">
+                                        <i class="fa fa-trash-o"></i> DELETE
                                     </a>
                                 </div>
                             </div>
@@ -133,7 +130,7 @@ $module_icon = "c-icon cil-list-rich";
                         <div class="card mb-4">
                             @if ($entries->hasPages())
                                 <div class="card-header">
-                                    <span class="badge badge-info float-end">
+                                    <span class="badge badge-info float-right">
                                         Page {!! $entries->currentPage() !!} of {!! $entries->lastPage() !!}
                                     </span>
                                 </div>
@@ -147,7 +144,7 @@ $module_icon = "c-icon cil-list-rich";
                                             <th style="width: 120px;">Level</th>
                                             <th style="width: 65px;">Time</th>
                                             <th>Header</th>
-                                            <th class="text-end">Actions</th>
+                                            <th class="text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -169,9 +166,9 @@ $module_icon = "c-icon cil-list-rich";
                                                 <td>
                                                     {{ $entry->header }}
                                                 </td>
-                                                <td class="text-end">
+                                                <td class="text-right">
                                                     @if ($entry->hasStack())
-                                                        <a class="btn btn-sm btn-light" role="button" data-coreui-toggle="collapse" href="#log-stack-{{ $key }}" aria-expanded="false" aria-controls="log-stack-{{ $key }}">
+                                                        <a class="btn btn-sm btn-light" role="button" data-toggle="collapse" href="#log-stack-{{ $key }}" aria-expanded="false" aria-controls="log-stack-{{ $key }}">
                                                             <i class="fa fa-toggle-on"></i> Stack
                                                         </a>
                                                     @endif
@@ -219,13 +216,15 @@ $module_icon = "c-icon cil-list-rich";
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">DELETE LOG FILE</h5>
-                    <button type="button" class="btn-close" data-coreui-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to <span class="badge bg-danger">DELETE</span> this log file <span class="badge text-bg-warning">{{ $log->date }}</span> ?</p>
+                    <p>Are you sure you want to <span class="badge badge-danger">DELETE</span> this log file <span class="badge badge-primary">{{ $log->date }}</span> ?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary mr-auto" data-coreui-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-secondary mr-auto" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-sm btn-danger" data-loading-text="Loading&hellip;">DELETE FILE</button>
                 </div>
             </div>
@@ -271,19 +270,13 @@ $module_icon = "c-icon cil-list-rich";
             });
 
             @unless (empty(log_styler()->toHighlight()))
-                @php
-                    $htmlHighlight = version_compare(PHP_VERSION, '7.4.0') >= 0
-                        ? join('|', log_styler()->toHighlight())
-                        : join(log_styler()->toHighlight(), '|');
-                @endphp
+            $('.stack-content').each(function() {
+                var $this = $(this);
+                var html = $this.html().trim()
+                    .replace(/({!! join(log_styler()->toHighlight(), '|') !!})/gm, '<strong>$1</strong>');
 
-                $('.stack-content').each(function() {
-                    var $this = $(this);
-                    var html = $this.html().trim()
-                        .replace(/({!! $htmlHighlight !!})/gm, '<strong>$1</strong>');
-
-                    $this.html(html);
-                });
+                $this.html(html);
+            });
             @endunless
         });
     </script>

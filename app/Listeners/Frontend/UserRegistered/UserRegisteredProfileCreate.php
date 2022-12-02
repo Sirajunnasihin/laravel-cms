@@ -21,7 +21,8 @@ class UserRegisteredProfileCreate implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  UserRegistered  $event
+     * @param UserRegistered $event
+     *
      * @return void
      */
     public function handle(UserRegistered $event)
@@ -33,7 +34,6 @@ class UserRegisteredProfileCreate implements ShouldQueue
         $userprofile->name = $user->name;
         $userprofile->first_name = $user->first_name;
         $userprofile->last_name = $user->last_name;
-        $userprofile->username = $user->username;
         $userprofile->email = $user->email;
         $userprofile->mobile = $user->mobile;
         $userprofile->gender = $user->gender;
@@ -43,8 +43,5 @@ class UserRegisteredProfileCreate implements ShouldQueue
         $userprofile->save();
 
         \Log::debug('UserRegisteredProfileCreate:'.$user->name);
-
-        // Clear Cache
-        \Artisan::call('cache:clear');
     }
 }

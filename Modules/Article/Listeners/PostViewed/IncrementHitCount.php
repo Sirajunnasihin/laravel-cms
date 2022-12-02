@@ -3,7 +3,7 @@
 namespace Modules\Article\Listeners\PostViewed;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
+use Log;
 use Modules\Article\Events\PostViewed;
 
 class IncrementHitCount implements ShouldQueue
@@ -21,7 +21,8 @@ class IncrementHitCount implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param object $event
+     *
      * @return void
      */
     public function handle(PostViewed $event)
